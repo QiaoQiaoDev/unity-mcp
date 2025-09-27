@@ -10,8 +10,18 @@ runner = CliRunner()
 
 def _invoke_cli(args):
     for key in list(sys.modules.keys()):
-        if key == "cli" or key.startswith("mcp"):
+        if key == "cli" or key.startswith("cli."):
             sys.modules.pop(key, None)
+            continue
+        if key.startswith("mcp"):
+            sys.modules.pop(key, None)
+            continue
+        if key.startswith("tools.") or key == "tools":
+            sys.modules.pop(key, None)
+            continue
+        if key.startswith("UnityMcpBridge.UnityMcpServer~.src.tools"):
+            sys.modules.pop(key, None)
+            continue
     cli = importlib.import_module("cli")
     return runner.invoke(cli.app, args)
 
