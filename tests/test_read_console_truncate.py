@@ -63,10 +63,9 @@ def test_read_console_full_default(monkeypatch):
     monkeypatch.setattr(read_console_mod, "get_unity_connection", lambda: object())
 
     resp = read_console(ctx=None, count=10)
-    assert resp == {
-        "success": True,
-        "data": {"lines": [{"level": "error", "message": "oops", "stacktrace": "trace", "time": "t"}]},
-    }
+    assert resp["success"] is True
+    assert resp["data"] == {"lines": [{"level": "error", "message": "oops", "stacktrace": "trace", "time": "t"}]}
+    assert "request_id" in resp and "protocolVersion" in resp
     assert captured["params"]["count"] == 10
     assert captured["params"]["includeStacktrace"] is True
 
@@ -88,5 +87,6 @@ def test_read_console_truncated(monkeypatch):
     monkeypatch.setattr(read_console_mod, "get_unity_connection", lambda: object())
 
     resp = read_console(ctx=None, count=10, include_stacktrace=False)
-    assert resp == {"success": True, "data": {"lines": [{"level": "error", "message": "oops"}]}}
+    assert resp["success"] is True
+    assert resp["data"] == {"lines": [{"level": "error", "message": "oops"}]}
     assert captured["params"]["includeStacktrace"] is False

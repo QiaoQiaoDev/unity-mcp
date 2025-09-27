@@ -1,16 +1,23 @@
+import importlib
 import json
+import sys
 from pathlib import Path
 
-import pytest
 from typer.testing import CliRunner
-
-from cli import app
 
 runner = CliRunner()
 
 
+def _invoke_cli(args):
+    for key in list(sys.modules.keys()):
+        if key == "cli" or key.startswith("mcp"):
+            sys.modules.pop(key, None)
+    cli = importlib.import_module("cli")
+    return runner.invoke(cli.app, args)
+
+
 def test_list_tools_outputs_json():
-    result = runner.invoke(app, ["list-tools"])
+    result = _invoke_cli(["list-tools"])
     assert result.exit_code == 0
     data = json.loads(result.stdout)
     assert isinstance(data, list)
@@ -27,9 +34,14 @@ def test_health_uses_stub(monkeypatch):
         assert name == "ping"
         return {"message": "pong"}
 
-    monkeypatch.setattr("cli.send_command_with_retry", _send_command)
-    monkeypatch.setattr("cli.get_unity_connection", lambda: object())
-    result = runner.invoke(app, ["health"])
+    for key in list(sys.modules.keys()):
+        if key == "cli" or key.startswith("mcp"):
+            sys.modules.pop(key, None)
+    import cli
+
+    monkeypatch.setattr(cli, "send_command_with_retry", _send_command)
+    monkeypatch.setattr(cli, "get_unity_connection", lambda: object())
+    result = runner.invoke(cli.app, ["health"])
     assert result.exit_code == 0
     payload = json.loads(result.stdout)
     assert payload["status"] == "ok"
@@ -48,7 +60,7 @@ def test_run_sample_returns_output(tmp_path: Path, monkeypatch):
     sample_path = tmp_path / "sample.json"
     sample_path.write_text(json.dumps(sample), encoding="utf-8")
 
-    result = runner.invoke(app, ["run-sample", str(sample_path), "--preview"])
+    result = _invoke_cli(["run-sample", str(sample_path), "--preview"])
     assert result.exit_code == 0
     payload = json.loads(result.stdout)
     assert payload["tool"] == "list_resources"

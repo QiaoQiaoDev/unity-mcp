@@ -65,4 +65,6 @@ def test_validate_script_returns_counts(monkeypatch):
     monkeypatch.setattr(manage_script, "send_command_with_retry", fake_send)
 
     resp = validate_script(None, uri="unity://path/Assets/Scripts/A.cs")
-    assert resp == {"success": True, "data": {"warnings": 1, "errors": 2}}
+    assert resp["success"] is True
+    assert resp["data"] == {"warnings": 1, "errors": 2}
+    assert "request_id" in resp

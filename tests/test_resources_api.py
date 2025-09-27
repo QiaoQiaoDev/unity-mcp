@@ -1,6 +1,4 @@
-import pytest
-
-
+import asyncio
 import sys
 from pathlib import Path
 import pytest
@@ -58,8 +56,7 @@ def test_resource_list_filters_and_rejects_traversal(resource_tools, tmp_path, m
 
     list_resources = resource_tools["list_resources"]
     # Only .cs under Assets should be listed
-    import asyncio
-    resp = asyncio.get_event_loop().run_until_complete(
+    resp = asyncio.run(
         list_resources(ctx=None, pattern="*.cs", under="Assets", limit=50, project_root=str(proj))
     )
     assert resp["success"] is True
@@ -67,14 +64,14 @@ def test_resource_list_filters_and_rejects_traversal(resource_tools, tmp_path, m
     assert any(u.endswith("Assets/Scripts/A.cs") for u in uris)
     assert not any(u.endswith("B.txt") for u in uris)
     assert not any(u.endswith("Outside.cs") for u in uris)
+    assert "request_id" in resp
 
 
 def test_resource_list_rejects_outside_paths(resource_tools, tmp_path):
     proj = tmp_path
     # under points outside Assets
     list_resources = resource_tools["list_resources"]
-    import asyncio
-    resp = asyncio.get_event_loop().run_until_complete(
+    resp = asyncio.run(
         list_resources(ctx=None, pattern="*.cs", under="..", limit=10, project_root=str(proj))
     )
     assert resp["success"] is False
