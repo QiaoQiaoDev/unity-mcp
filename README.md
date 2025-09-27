@@ -51,6 +51,13 @@ MCP for Unity acts as a bridge, allowing AI assistants (like Claude, Cursor) to 
   *   `validate_script`: Fast validation (basic/standard) to catch syntax/structure issues before/after writes.
 </details>
 
+## Branch Highlights (2025)
+
+- Scope-aware anchor matching for `anchor_insert` keeps class-level braces intact; regression coverage lives in `tests/test_improved_anchor_matching.py`. Thanks to Armando for leading the hardening pass and to the Coplay tooling crew for pairing on the heuristics.
+- QiaoQiaoDev expanded the Typer-powered `unity-mcp` CLI (`health`, `list-tools`, `run-sample`) and unified pytest runner so you can smoke-test tool flows without leaving the terminal.
+- Marcus Sanatan, Shutong Wu, and Scriptwonder grew the bundled Unity sample project—`TestProjects/UnityMCPTests` now includes the GiantFight runtime harness to exercise input, URP, and runtime bootstrap paths.
+- Coplay maintainers David Sarno and Justin Barnett layered in request_id logging, telemetry, guardrails, and packaging polish so this branch stays production-ready for MCP clients.
+
 ---
 
 ## How It Works 
@@ -118,6 +125,7 @@ MCP for Unity connects your tools using two components:
 ## Tests & CI
 
 - Run the Python suite with `pytest -q`. New tests cover guardrail policies, the Typer CLI, and existing script-edit guards.
+- Regression coverage for the improved anchor matching heuristics lives in `tests/test_improved_anchor_matching.py` so we keep class-end inserts stable.
 - Unity Edit Mode tests live under `TestProjects/UnityMCPTests/Assets/Tests/EditMode/` and exercise editor helpers such as `McpSettingsProvider`.
 - GitHub Actions now runs `ci.yml` (Python lint/tests with non-blocking analyzers) alongside the existing `unity-tests.yml` (EditMode sweeps via game-ci).
 
@@ -338,7 +346,7 @@ If you're contributing to MCP for Unity or want to test core changes, we have de
 
 - **Development Deployment Scripts**: Quickly deploy and test your changes to MCP for Unity Bridge and Python Server
 - **Automatic Backup System**: Safe testing with easy rollback capabilities  
-- **Hot Reload Workflow**: Fast iteration cycle for core development
+- **Diagnostics Tooling**: Typer CLI commands and `tools/stress_mcp.py` let you reproduce guardrail, concurrency, and sample flows. (Hot reload and plugin dev kit live on the README-DEV "Coming Soon" roadmap.)
 
 📖 **See [README-DEV.md](README-DEV.md)** for complete development setup and workflow documentation.
 
