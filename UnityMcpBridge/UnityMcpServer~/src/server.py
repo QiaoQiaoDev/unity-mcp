@@ -12,6 +12,7 @@ import time
 # Configure logging before doing anything else so startup logs are structured
 setup_logging()
 logger = logging.getLogger("mcp-for-unity-server")
+logger.info("Unity MCP protocol version %s", config.protocol_version)
 
 # Import telemetry only after logging is configured to ensure its logs use stderr and proper levels
 # Ensure a slightly higher telemetry timeout unless explicitly overridden by env

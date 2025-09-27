@@ -39,5 +39,8 @@ class ServerConfig:
     # Align with telemetry.py default Cloud Run endpoint
     telemetry_endpoint: str = "https://api-prod.coplay.dev/telemetry/events"
 
+    # Protocol metadata
+    protocol_version: str = "1"
+
 # Create a global config instance
 config = ServerConfig() 

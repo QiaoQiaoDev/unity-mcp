@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://unity-mcp.dev/schemas/v1/read_console-response.json",
+  "title": "read_console response",
+  "allOf": [
+    {
+      "$ref": "tool-response.json"
+    }
+  ]
+}

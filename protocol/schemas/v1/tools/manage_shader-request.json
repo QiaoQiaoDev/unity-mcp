@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": true,
+  "$id": "https://unity-mcp.dev/schemas/v1/manage_shader-request.json",
+  "title": "manage_shader request",
+  "required": [
+    "action",
+    "name",
+    "path"
+  ],
+  "properties": {
+    "action": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "path": {
+      "type": "string"
+    },
+    "contents": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "encodedContents": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "contentsEncoded": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    }
+  }
+}

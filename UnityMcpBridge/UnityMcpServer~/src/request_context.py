@@ -9,6 +9,8 @@ import os
 import typing as t
 import uuid
 
+from config import config
+
 _logger = logging.getLogger("mcp-for-unity-server")
 
 _request_id_var: contextvars.ContextVar[str | None] = contextvars.ContextVar(
@@ -79,6 +81,10 @@ def annotate_response(payload: t.Any) -> t.Any:
         if "request_id" not in payload:
             payload = dict(payload)
             payload["request_id"] = rid
+        else:
+            payload = dict(payload)
+        payload.setdefault("protocol_version", getattr(config, "protocol_version", "1"))
+        payload.setdefault("protocolVersion", getattr(config, "protocol_version", "1"))
         return payload
     # Avoid mutating arbitrary payload types; return as-is
     return payload

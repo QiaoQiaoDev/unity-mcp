@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": true,
+  "$id": "https://unity-mcp.dev/schemas/v1/manage_scene-request.json",
+  "title": "manage_scene request",
+  "required": [
+    "action"
+  ],
+  "properties": {
+    "action": {
+      "type": "string"
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "path": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "build_index": {
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ]
+    },
+    "buildIndex": {
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ]
+    }
+  }
+}

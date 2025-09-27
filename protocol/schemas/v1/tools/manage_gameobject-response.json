@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://unity-mcp.dev/schemas/v1/manage_gameobject-response.json",
+  "title": "manage_gameobject response",
+  "allOf": [
+    {
+      "$ref": "tool-response.json"
+    }
+  ]
+}

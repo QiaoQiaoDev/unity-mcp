@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": true,
+  "$id": "https://unity-mcp.dev/schemas/v1/create_script-request.json",
+  "title": "create_script request",
+  "required": [
+    "path"
+  ],
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "contents": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "script_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "scriptType": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "namespace": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

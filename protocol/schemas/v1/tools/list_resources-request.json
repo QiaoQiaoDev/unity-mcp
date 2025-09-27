@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": true,
+  "$id": "https://unity-mcp.dev/schemas/v1/list_resources-request.json",
+  "title": "list_resources request",
+  "required": [],
+  "properties": {
+    "pattern": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "under": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "limit": {
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ]
+    },
+    "project_root": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "projectRoot": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

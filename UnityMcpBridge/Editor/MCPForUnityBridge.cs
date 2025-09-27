@@ -22,6 +22,7 @@ namespace MCPForUnity.Editor
     [InitializeOnLoad]
     public static partial class MCPForUnityBridge
     {
+        internal const string ProtocolVersion = "1";
         private static TcpListener listener;
         private static bool isRunning = false;
         private static readonly object lockObj = new();
@@ -45,6 +46,7 @@ namespace MCPForUnity.Editor
         private static double nextStartAt = 0.0f;
         private static double nextHeartbeatAt = 0.0f;
         private static int heartbeatSeq = 0;
+        private static bool protocolMismatchWarned = false;
         private static Dictionary<
             string,
             (string commandJson, TaskCompletionSource<string> tcs)
@@ -892,6 +894,15 @@ namespace MCPForUnity.Editor
                     }
                     else
                     {
+                        if (!protocolMismatchWarned)
+                        {
+                            string clientVersion = command.protocolVersion;
+                            if (!string.IsNullOrEmpty(clientVersion) && !string.Equals(clientVersion, ProtocolVersion, StringComparison.Ordinal))
+                            {
+                                McpLog.Warn($"Protocol mismatch: expected {ProtocolVersion}, received {clientVersion}");
+                                protocolMismatchWarned = true;
+                            }
+                        }
                         using (RequestContext.Push(command.requestId))
                         {
                             string responseJson = ExecuteCommand(command);
@@ -1024,6 +1035,8 @@ namespace MCPForUnity.Editor
                     var errorResponse = new
                     {
                         status = "error",
+                        protocolVersion = ProtocolVersion,
+                        protocol_version = ProtocolVersion,
                         requestId = RequestContext.CurrentRequestId,
                         error = "Command type cannot be empty",
                         details = "A valid command type is required for processing",
@@ -1037,6 +1050,8 @@ namespace MCPForUnity.Editor
                     var pingResponse = new
                     {
                         status = "success",
+                        protocolVersion = ProtocolVersion,
+                        protocol_version = ProtocolVersion,
                         requestId = command.requestId ?? RequestContext.CurrentRequestId,
                         result = new { message = "pong" },
                     };
@@ -1073,6 +1088,8 @@ namespace MCPForUnity.Editor
                 {
                     status = "success",
                     requestId,
+                    protocolVersion = ProtocolVersion,
+                    protocol_version = ProtocolVersion,
                     result,
                 };
                 return JsonConvert.SerializeObject(response);
@@ -1090,6 +1107,8 @@ namespace MCPForUnity.Editor
                 {
                     status = "error",
                     requestId,
+                    protocolVersion = ProtocolVersion,
+                    protocol_version = ProtocolVersion,
                     error = ex.Message, // Provide the specific error message
                     command = command?.type ?? "Unknown", // Include the command type if available
                     stackTrace = ex.StackTrace, // Include stack trace for detailed debugging
@@ -1107,7 +1126,16 @@ namespace MCPForUnity.Editor
             {
                 if (IsDebugEnabled()) Debug.Log("[MCP] manage_scene: dispatching to main thread");
                 var sw = System.Diagnostics.Stopwatch.StartNew();
-                var r = InvokeOnMainThreadWithTimeout(() => ManageScene.HandleCommand(paramsObject), FrameIOTimeoutMs);
+                string requestId = RequestContext.CurrentRequestId;
+                var r = InvokeOnMainThreadWithTimeout(
+                    () =>
+                    {
+                        using (RequestContext.Push(requestId))
+                        {
+                            return ManageScene.HandleCommand(paramsObject);
+                        }
+                    },
+                    FrameIOTimeoutMs);
                 sw.Stop();
                 if (IsDebugEnabled()) Debug.Log($"[MCP] manage_scene: completed in {sw.ElapsedMilliseconds} ms");
                 return r ?? Response.Error("manage_scene returned null (timeout or error)");
@@ -1176,7 +1204,8 @@ namespace MCPForUnity.Editor
                     reason = reason ?? (reloading ? "reloading" : "ready"),
                     seq = heartbeatSeq,
                     project_path = Application.dataPath,
-                    last_heartbeat = DateTime.UtcNow.ToString("O")
+                    last_heartbeat = DateTime.UtcNow.ToString("O"),
+                    protocol_version = ProtocolVersion
                 };
                 File.WriteAllText(filePath, JsonConvert.SerializeObject(payload), new System.Text.UTF8Encoding(false));
             }

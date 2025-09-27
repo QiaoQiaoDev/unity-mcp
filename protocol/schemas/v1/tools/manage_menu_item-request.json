@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": true,
+  "$id": "https://unity-mcp.dev/schemas/v1/manage_menu_item-request.json",
+  "title": "manage_menu_item request",
+  "required": [
+    "action"
+  ],
+  "properties": {
+    "action": {
+      "type": "string"
+    },
+    "menu_path": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "menuPath": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "search": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "refresh": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    }
+  }
+}

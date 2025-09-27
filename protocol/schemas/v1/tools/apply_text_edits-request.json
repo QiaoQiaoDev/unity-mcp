@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": true,
+  "$id": "https://unity-mcp.dev/schemas/v1/apply_text_edits-request.json",
+  "title": "apply_text_edits request",
+  "required": [
+    "uri",
+    "edits"
+  ],
+  "properties": {
+    "uri": {
+      "type": "string"
+    },
+    "edits": {
+      "type": "array"
+    },
+    "precondition_sha256": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "preconditionSha256": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "strict": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "options": {
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  }
+}

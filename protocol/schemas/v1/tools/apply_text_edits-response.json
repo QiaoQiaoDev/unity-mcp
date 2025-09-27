@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://unity-mcp.dev/schemas/v1/apply_text_edits-response.json",
+  "title": "apply_text_edits response",
+  "allOf": [
+    {
+      "$ref": "tool-response.json"
+    }
+  ]
+}

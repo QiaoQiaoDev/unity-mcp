@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": true,
+  "$id": "https://unity-mcp.dev/schemas/v1/manage_prefabs-request.json",
+  "title": "manage_prefabs request",
+  "required": [
+    "action"
+  ],
+  "properties": {
+    "action": {
+      "type": "string"
+    },
+    "prefab_path": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "prefabPath": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "mode": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "save_before_close": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "saveBeforeClose": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "target": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "allow_overwrite": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "allowOverwrite": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "search_inactive": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "searchInactive": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    }
+  }
+}

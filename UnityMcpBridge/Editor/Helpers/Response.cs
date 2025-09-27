@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using MCPForUnity.Editor;
 
 namespace MCPForUnity.Editor.Helpers
 {
@@ -17,19 +17,19 @@ namespace MCPForUnity.Editor.Helpers
         /// <returns>An object representing the success response.</returns>
         public static object Success(string message, object data = null)
         {
+            var payload = new Dictionary<string, object>
+            {
+                ["success"] = true,
+                ["message"] = message,
+            };
+
             if (data != null)
             {
-                return new
-                {
-                    success = true,
-                    message = message,
-                    data = data,
-                };
+                payload["data"] = data;
             }
-            else
-            {
-                return new { success = true, message = message };
-            }
+
+            AttachRequestId(payload);
+            return payload;
         }
 
         /// <summary>
@@ -40,24 +40,32 @@ namespace MCPForUnity.Editor.Helpers
         /// <returns>An object representing the error response.</returns>
         public static object Error(string errorCodeOrMessage, object data = null)
         {
+            var payload = new Dictionary<string, object>
+            {
+                ["success"] = false,
+                ["code"] = errorCodeOrMessage,
+                ["error"] = errorCodeOrMessage,
+            };
+
             if (data != null)
             {
-                // Note: The key is "error" for error messages, not "message"
-                return new
-                {
-                    success = false,
-                    // Preserve original behavior while adding a machine-parsable code field.
-                    // If callers pass a code string, it will be echoed in both code and error.
-                    code = errorCodeOrMessage,
-                    error = errorCodeOrMessage,
-                    data = data,
-                };
+                payload["data"] = data;
             }
-            else
+
+            AttachRequestId(payload);
+            return payload;
+        }
+
+        private static void AttachRequestId(IDictionary<string, object> payload)
+        {
+            string requestId = RequestContext.CurrentRequestId;
+            if (!string.IsNullOrEmpty(requestId))
             {
-                return new { success = false, code = errorCodeOrMessage, error = errorCodeOrMessage };
+                payload["requestId"] = requestId;
+                payload["request_id"] = requestId;
             }
+            payload["protocolVersion"] = MCPForUnityBridge.ProtocolVersion;
+            payload["protocol_version"] = MCPForUnityBridge.ProtocolVersion;
         }
     }
 }
-

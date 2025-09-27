@@ -14,15 +14,11 @@ from config import config
 from port_discovery import PortDiscovery
 from request_context import current_request_id
 
-# Configure logging using settings from config
-logging.basicConfig(
-    level=getattr(logging, config.log_level),
-    format=config.log_format
-)
 logger = logging.getLogger("mcp-for-unity-server")
 
 # Module-level lock to guard global connection initialization
 _connection_lock = threading.Lock()
+_protocol_warning_emitted = False
 
 # Maximum allowed framed payload size (64 MiB)
 FRAMED_MAX = 64 * 1024 * 1024
@@ -223,7 +219,9 @@ class UnityConnection:
                     return None
                 latest = status_files[0]
                 with latest.open('r') as f:
-                    return json.load(f)
+                    data = json.load(f)
+                    _maybe_warn_protocol(data.get('protocol_version') or data.get('protocolVersion'))
+                    return data
             except Exception:
                 return None
 
@@ -263,6 +261,7 @@ class UnityConnection:
                     command = {"type": command_type, "params": prepared_params or {}}
                     if request_id:
                         command["requestId"] = request_id
+                    command["protocolVersion"] = getattr(config, "protocol_version", "1")
                     payload = json.dumps(command, ensure_ascii=False).encode('utf-8')
 
                 # Send/receive are serialized to protect the shared socket
@@ -304,6 +303,7 @@ class UnityConnection:
                     raise Exception("Ping unsuccessful")
 
                 resp = json.loads(response_data.decode('utf-8'))
+                _maybe_warn_protocol(resp.get('protocolVersion') or resp.get('protocol_version'))
                 if resp.get('status') == 'error':
                     err = resp.get('error') or resp.get('message', 'Unknown Unity error')
                     raise Exception(err)
@@ -430,3 +430,18 @@ async def async_send_command_with_retry(command_type: str, params: Dict[str, Any
     except Exception as e:
         # Return a structured error dict for consistency with other responses
         return {"success": False, "error": f"Python async retry helper failed: {str(e)}"}
+def _maybe_warn_protocol(version: Any) -> None:
+    global _protocol_warning_emitted
+    expected = str(getattr(config, "protocol_version", "1"))
+    if _protocol_warning_emitted:
+        return
+    if version is None:
+        return
+    actual = str(version)
+    if actual and actual != expected:
+        logger.warning(
+            "Unity bridge protocol mismatch: python=%s unity=%s",
+            expected,
+            actual,
+        )
+        _protocol_warning_emitted = True

@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://unity-mcp.dev/schemas/v1/response-envelope.json",
+  "title": "MCP Response Envelope",
+  "type": "object",
+  "required": ["id"],
+  "properties": {
+    "id": {
+      "description": "Opaque identifier that matches the originating request",
+      "type": ["string", "integer"]
+    },
+    "result": {
+      "description": "Result payload when the request succeeds",
+      "type": ["object", "null"]
+    },
+    "error": {
+      "description": "Error object when the request fails",
+      "type": ["object", "null"]
+    },
+    "request_id": {
+      "description": "Correlation identifier propagated with the request",
+      "type": ["string", "null"]
+    },
+    "protocolVersion": {
+      "description": "Protocol version advertised in the response",
+      "type": ["string", "null"]
+    },
+    "protocol_version": {
+      "description": "Snake case alias for the protocol version",
+      "type": ["string", "null"]
+    },
+    "timestamp": {
+      "description": "Server-side timestamp for the response",
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": true,
+  "oneOf": [
+    {"required": ["result"]},
+    {"required": ["error"]}
+  ]
+}

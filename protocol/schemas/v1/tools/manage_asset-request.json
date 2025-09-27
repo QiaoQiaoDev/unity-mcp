@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": true,
+  "$id": "https://unity-mcp.dev/schemas/v1/manage_asset-request.json",
+  "title": "manage_asset request",
+  "required": [
+    "action",
+    "path"
+  ],
+  "properties": {
+    "action": {
+      "type": "string"
+    },
+    "path": {
+      "type": "string"
+    },
+    "asset_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "assetType": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "properties": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "destination": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "search_pattern": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "searchPattern": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "filter_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "filterType": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "filter_date_after": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "filterDateAfter": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "page_size": {
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ]
+    },
+    "pageSize": {
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ]
+    },
+    "page_number": {
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ]
+    },
+    "pageNumber": {
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ]
+    },
+    "generate_preview": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "generatePreview": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    }
+  }
+}

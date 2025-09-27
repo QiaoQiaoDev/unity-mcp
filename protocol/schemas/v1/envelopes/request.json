@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://unity-mcp.dev/schemas/v1/request-envelope.json",
+  "title": "MCP Request Envelope",
+  "type": "object",
+  "required": ["id", "method"],
+  "properties": {
+    "id": {
+      "description": "Opaque identifier supplied by the client",
+      "type": ["string", "integer"]
+    },
+    "method": {
+      "description": "RPC method name (e.g. tools/call)",
+      "type": "string"
+    },
+    "params": {
+      "description": "Invocation-specific parameters",
+      "type": ["object", "null"]
+    },
+    "jsonrpc": {
+      "description": "JSON-RPC protocol version string",
+      "type": "string"
+    },
+    "request_id": {
+      "description": "Correlation identifier propagated by the server",
+      "type": "string"
+    },
+    "protocolVersion": {
+      "description": "Protocol version advertised by the client",
+      "type": ["string", "null"]
+    },
+    "protocol_version": {
+      "description": "Snake case alias for the protocol version",
+      "type": ["string", "null"]
+    },
+    "timestamp": {
+      "description": "Client timestamp for the request (optional)",
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": true,
+  "$id": "https://unity-mcp.dev/schemas/v1/read_console-request.json",
+  "title": "read_console request",
+  "required": [],
+  "properties": {
+    "action": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "types": {
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "count": {
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ]
+    },
+    "filter_text": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "filterText": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "since_timestamp": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sinceTimestamp": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "format": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "include_stacktrace": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "includeStacktrace": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    }
+  }
+}

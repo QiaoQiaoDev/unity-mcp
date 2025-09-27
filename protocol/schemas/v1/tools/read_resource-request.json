@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": true,
+  "$id": "https://unity-mcp.dev/schemas/v1/read_resource-request.json",
+  "title": "read_resource request",
+  "required": [
+    "uri"
+  ],
+  "properties": {
+    "uri": {
+      "type": "string"
+    },
+    "start_line": {
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ]
+    },
+    "startLine": {
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ]
+    },
+    "line_count": {
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ]
+    },
+    "lineCount": {
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ]
+    },
+    "head_bytes": {
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ]
+    },
+    "headBytes": {
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ]
+    },
+    "tail_lines": {
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ]
+    },
+    "tailLines": {
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ]
+    },
+    "project_root": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "projectRoot": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "request": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

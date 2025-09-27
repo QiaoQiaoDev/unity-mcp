@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": true,
+  "$id": "https://unity-mcp.dev/schemas/v1/validate_script-request.json",
+  "title": "validate_script request",
+  "required": [
+    "uri"
+  ],
+  "properties": {
+    "uri": {
+      "type": "string"
+    },
+    "level": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "include_diagnostics": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "includeDiagnostics": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    }
+  }
+}

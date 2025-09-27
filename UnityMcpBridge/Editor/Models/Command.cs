@@ -21,5 +21,10 @@ namespace MCPForUnity.Editor.Models
         /// Optional request identifier propagated from the Python bridge.
         /// </summary>
         public string requestId { get; set; }
+
+        /// <summary>
+        /// Optional protocol version sent by the Python bridge.
+        /// </summary>
+        public string protocolVersion { get; set; }
     }
 }

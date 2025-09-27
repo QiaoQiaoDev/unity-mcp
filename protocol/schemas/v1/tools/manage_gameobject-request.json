@@ -1,0 +1,237 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": true,
+  "$id": "https://unity-mcp.dev/schemas/v1/manage_gameobject-request.json",
+  "title": "manage_gameobject request",
+  "required": [
+    "action"
+  ],
+  "properties": {
+    "action": {
+      "type": "string"
+    },
+    "target": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "search_method": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "searchMethod": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "tag": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "parent": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "position": {
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "rotation": {
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "scale": {
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "components_to_add": {
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "componentsToAdd": {
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "primitive_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "primitiveType": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "save_as_prefab": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "saveAsPrefab": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "prefab_path": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "prefabPath": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "prefab_folder": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "prefabFolder": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "set_active": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "setActive": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "layer": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "components_to_remove": {
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "componentsToRemove": {
+      "type": [
+        "array",
+        "null"
+      ]
+    },
+    "component_properties": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "componentProperties": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "search_term": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "searchTerm": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "find_all": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "findAll": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "search_in_children": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "searchInChildren": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "search_inactive": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "searchInactive": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "component_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "componentName": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "includeNonPublicSerialized": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    }
+  }
+}

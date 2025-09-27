@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": true,
+  "$id": "https://unity-mcp.dev/schemas/v1/script_apply_edits-request.json",
+  "title": "script_apply_edits request",
+  "required": [
+    "name",
+    "path",
+    "edits"
+  ],
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "path": {
+      "type": "string"
+    },
+    "edits": {
+      "type": "array"
+    },
+    "options": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "script_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "scriptType": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "namespace": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

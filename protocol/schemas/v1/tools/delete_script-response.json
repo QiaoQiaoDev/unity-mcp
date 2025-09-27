@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://unity-mcp.dev/schemas/v1/delete_script-response.json",
+  "title": "delete_script response",
+  "allOf": [
+    {
+      "$ref": "tool-response.json"
+    }
+  ]
+}

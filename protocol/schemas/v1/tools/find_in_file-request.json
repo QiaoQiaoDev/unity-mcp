@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": true,
+  "$id": "https://unity-mcp.dev/schemas/v1/find_in_file-request.json",
+  "title": "find_in_file request",
+  "required": [
+    "uri",
+    "pattern"
+  ],
+  "properties": {
+    "uri": {
+      "type": "string"
+    },
+    "pattern": {
+      "type": "string"
+    },
+    "ignore_case": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "ignoreCase": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "project_root": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "projectRoot": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "max_results": {
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ]
+    },
+    "maxResults": {
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ]
+    }
+  }
+}

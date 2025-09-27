@@ -9,6 +9,7 @@ import logging
 from typing import Callable, Any
 from telemetry import record_tool_usage, record_milestone, MilestoneType
 from request_context import activate_request_context, annotate_response
+from schema_validator import validate_tool_request, validate_tool_response
 
 
 def _extract_ctx(args: tuple, kwargs: dict):
@@ -17,6 +18,16 @@ def _extract_ctx(args: tuple, kwargs: dict):
         if hasattr(value, "request_id"):
             return value
     return kwargs.get("ctx")
+
+
+def _extract_payload(func, args, kwargs) -> dict:
+    try:
+        sig = inspect.signature(func)
+        bound = sig.bind_partial(*args, **kwargs)
+        bound.apply_defaults()
+        return {k: v for k, v in bound.arguments.items() if k != "ctx"}
+    except Exception:
+        return {}
 
 _log = logging.getLogger("unity-mcp-telemetry")
 _decorator_log_count = 0
@@ -31,16 +42,20 @@ def telemetry_tool(tool_name: str):
             error = None
             # Extract sub-action (e.g., 'get_hierarchy') from bound args when available
             sub_action = None
+            payload = {}
             try:
                 sig = inspect.signature(func)
                 bound = sig.bind_partial(*args, **kwargs)
                 bound.apply_defaults()
                 sub_action = bound.arguments.get("action")
+                payload = {k: v for k, v in bound.arguments.items() if k != "ctx"}
             except Exception:
                 sub_action = None
+                payload = _extract_payload(func, args, kwargs)
             ctx = _extract_ctx(args, kwargs)
             try:
                 with activate_request_context(ctx):
+                    validate_tool_request(tool_name, payload)
                     global _decorator_log_count
                     if _decorator_log_count < 10:
                         _log.info(f"telemetry_decorator sync: tool={tool_name}")
@@ -56,7 +71,10 @@ def telemetry_tool(tool_name: str):
                         record_milestone(MilestoneType.FIRST_TOOL_USAGE)
                     except Exception:
                         _log.debug("milestone emit failed", exc_info=True)
-                    return annotate_response(result)
+                    annotated = annotate_response(result)
+                    if isinstance(annotated, dict):
+                        validate_tool_response(tool_name, annotated)
+                    return annotated
             except Exception as e:
                 error = str(e)
                 raise
@@ -74,16 +92,20 @@ def telemetry_tool(tool_name: str):
             error = None
             # Extract sub-action (e.g., 'get_hierarchy') from bound args when available
             sub_action = None
+            payload = {}
             try:
                 sig = inspect.signature(func)
                 bound = sig.bind_partial(*args, **kwargs)
                 bound.apply_defaults()
                 sub_action = bound.arguments.get("action")
+                payload = {k: v for k, v in bound.arguments.items() if k != "ctx"}
             except Exception:
                 sub_action = None
+                payload = _extract_payload(func, args, kwargs)
             ctx = _extract_ctx(args, kwargs)
             try:
                 with activate_request_context(ctx):
+                    validate_tool_request(tool_name, payload)
                     global _decorator_log_count
                     if _decorator_log_count < 10:
                         _log.info(f"telemetry_decorator async: tool={tool_name}")
@@ -99,7 +121,10 @@ def telemetry_tool(tool_name: str):
                         record_milestone(MilestoneType.FIRST_TOOL_USAGE)
                     except Exception:
                         _log.debug("milestone emit failed", exc_info=True)
-                    return annotate_response(result)
+                    annotated = annotate_response(result)
+                    if isinstance(annotated, dict):
+                        validate_tool_response(tool_name, annotated)
+                    return annotated
             except Exception as e:
                 error = str(e)
                 raise

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://unity-mcp.dev/schemas/v1/tool-response.json",
+  "title": "Unity MCP Tool Response",
+  "type": "object",
+  "required": ["request_id"],
+  "properties": {
+    "success": {
+      "description": "Indicates whether the tool operation succeeded",
+      "type": ["boolean", "null"]
+    },
+    "message": {
+      "description": "Human readable summary of the outcome",
+      "type": ["string", "null"]
+    },
+    "error": {
+      "description": "Error text when success is false",
+      "type": ["string", "null"]
+    },
+    "code": {
+      "description": "Machine readable error code",
+      "type": ["string", "integer", "null"]
+    },
+    "data": {
+      "description": "Tool specific payload",
+      "type": ["object", "array", "string", "number", "boolean", "null"]
+    },
+    "request_id": {
+      "description": "Correlation identifier for the originating tool call",
+      "type": "string"
+    },
+    "requestId": {
+      "description": "CamelCase alias for request identifier",
+      "type": ["string", "null"]
+    },
+    "protocolVersion": {
+      "description": "Protocol version reported by the responder",
+      "type": ["string", "null"]
+    },
+    "protocol_version": {
+      "description": "Snake case alias for the protocol version",
+      "type": ["string", "null"]
+    }
+  },
+  "additionalProperties": true
+}

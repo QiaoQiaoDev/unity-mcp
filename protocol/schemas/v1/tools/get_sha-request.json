@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": true,
+  "$id": "https://unity-mcp.dev/schemas/v1/get_sha-request.json",
+  "title": "get_sha request",
+  "required": [
+    "uri"
+  ],
+  "properties": {
+    "uri": {
+      "type": "string"
+    }
+  }
+}

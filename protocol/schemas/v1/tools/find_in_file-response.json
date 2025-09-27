@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://unity-mcp.dev/schemas/v1/find_in_file-response.json",
+  "title": "find_in_file response",
+  "allOf": [
+    {
+      "$ref": "tool-response.json"
+    }
+  ]
+}

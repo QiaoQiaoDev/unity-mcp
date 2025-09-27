@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": true,
+  "$id": "https://unity-mcp.dev/schemas/v1/manage_editor-request.json",
+  "title": "manage_editor request",
+  "required": [
+    "action"
+  ],
+  "properties": {
+    "action": {
+      "type": "string"
+    },
+    "wait_for_completion": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "waitForCompletion": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "tool_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "toolName": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "tag_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "tagName": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "layer_name": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "layerName": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}
