@@ -107,7 +107,7 @@ MCP for Unity connects your tools using two components:
 - Install in editable mode (`pip install -e .`) and use `unity-mcp` for quick diagnostics:
   - `unity-mcp health` — pings the Unity bridge (respects guardrails).
   - `unity-mcp list-tools [--details]` — prints available MCP tools as JSON.
-- `unity-mcp run-sample path/to/sample.json [--preview]` — execute or preview a JSON-described tool call (handy for regression samples or repro scripts).
+  - `unity-mcp run-sample path/to/sample.json [--preview]` — execute or preview a JSON-described tool call (handy for regression samples or repro scripts).
 - The existing `unity-mcp-server` entry point still launches the stdio transport (now configurable via the `MCP_TRANSPORT` env var).
 
 ## Utility Scripts

@@ -19,7 +19,9 @@ def _invoke_cli(args):
         if key.startswith("tools.") or key == "tools":
             sys.modules.pop(key, None)
             continue
-        if key.startswith("UnityMcpBridge.UnityMcpServer~.src.tools"):
+        if key.startswith("UnityMcpBridge.UnityMcpServer~.src.tools") or key.startswith(
+            "UnityMcpBridge.UnityMcpServer.src.tools"
+        ):
             sys.modules.pop(key, None)
             continue
     cli = importlib.import_module("cli")
