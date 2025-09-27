@@ -10,6 +10,7 @@ from typing import Callable, Any
 from telemetry import record_tool_usage, record_milestone, MilestoneType
 from request_context import activate_request_context, annotate_response
 from schema_validator import validate_tool_request, validate_tool_response
+from guardrails import evaluate as guardrail_evaluate
 
 
 def _extract_ctx(args: tuple, kwargs: dict):
@@ -56,6 +57,9 @@ def telemetry_tool(tool_name: str):
             try:
                 with activate_request_context(ctx):
                     validate_tool_request(tool_name, payload)
+                    guardrail_result = guardrail_evaluate(tool_name, payload)
+                    if guardrail_result is not None:
+                        return annotate_response(guardrail_result)
                     global _decorator_log_count
                     if _decorator_log_count < 10:
                         _log.info(f"telemetry_decorator sync: tool={tool_name}")
@@ -106,6 +110,9 @@ def telemetry_tool(tool_name: str):
             try:
                 with activate_request_context(ctx):
                     validate_tool_request(tool_name, payload)
+                    guardrail_result = guardrail_evaluate(tool_name, payload)
+                    if guardrail_result is not None:
+                        return annotate_response(guardrail_result)
                     global _decorator_log_count
                     if _decorator_log_count < 10:
                         _log.info(f"telemetry_decorator async: tool={tool_name}")
