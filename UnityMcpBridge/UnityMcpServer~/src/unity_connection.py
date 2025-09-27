@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any, Dict
 from config import config
 from port_discovery import PortDiscovery
+from request_context import current_request_id
 
 # Configure logging using settings from config
 logging.basicConfig(
@@ -249,10 +250,19 @@ class UnityConnection:
                     raise Exception("Could not connect to Unity")
 
                 # Build payload
+                request_id = current_request_id()
+
                 if command_type == 'ping':
                     payload = b'ping'
                 else:
-                    command = {"type": command_type, "params": params or {}}
+                    prepared_params = dict(params) if isinstance(params, dict) else params
+
+                    if request_id and isinstance(prepared_params, dict) and "requestId" not in prepared_params:
+                        prepared_params["requestId"] = request_id
+
+                    command = {"type": command_type, "params": prepared_params or {}}
+                    if request_id:
+                        command["requestId"] = request_id
                     payload = json.dumps(command, ensure_ascii=False).encode('utf-8')
 
                 # Send/receive are serialized to protect the shared socket
