@@ -16,6 +16,7 @@ using MCPForUnity.Editor.Models;
 using MCPForUnity.Editor.Tools;
 using MCPForUnity.Editor.Tools.MenuItems;
 using MCPForUnity.Editor.Tools.Prefabs;
+using MCPForUnity.Editor.Settings;
 
 namespace MCPForUnity.Editor
 {
@@ -47,15 +48,17 @@ namespace MCPForUnity.Editor
         private static double nextHeartbeatAt = 0.0f;
         private static int heartbeatSeq = 0;
         private static bool protocolMismatchWarned = false;
+        private static long totalCommandsProcessed = 0;
+        private static int maxQueueDepth = 0;
         private static Dictionary<
             string,
             (string commandJson, TaskCompletionSource<string> tcs)
         > commandQueue = new();
         private static int mainThreadId;
-        private static int currentUnityPort = 6400; // Dynamic port, starts with default
+        private static int currentUnityPort = McpSettingsProvider.Settings.defaultUnityPort;
         private static bool isAutoConnectMode = false;
         private const ulong MaxFrameBytes = 64UL * 1024 * 1024; // 64 MiB hard cap for framed payloads
-        private const int FrameIOTimeoutMs = 30000; // Per-read timeout to avoid stalled clients
+        private static int FrameIOTimeoutMs => Mathf.RoundToInt(Settings.McpSettingsProvider.Settings.responseTimeoutSeconds * 1000f);
         
         // IO diagnostics
         private static long _ioSeq = 0;
@@ -823,6 +826,11 @@ namespace MCPForUnity.Editor
                 work = commandQueue
                     .Select(kvp => (kvp.Key, kvp.Value.commandJson, kvp.Value.tcs))
                     .ToList();
+                if (work.Count > maxQueueDepth)
+                {
+                    maxQueueDepth = work.Count;
+                    McpLog.Info($"[Queue] depth={maxQueueDepth}", always: false);
+                }
             }
 
             foreach (var item in work)
@@ -909,6 +917,7 @@ namespace MCPForUnity.Editor
                             tcs.SetResult(responseJson);
                         }
                     }
+                    System.Threading.Interlocked.Increment(ref totalCommandsProcessed);
                 }
                 catch (Exception ex)
                 {

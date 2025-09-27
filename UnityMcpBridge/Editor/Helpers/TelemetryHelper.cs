@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
+using MCPForUnity.Editor.Settings;
 
 namespace MCPForUnity.Editor.Helpers
 {
@@ -41,6 +42,11 @@ namespace MCPForUnity.Editor.Helpers
                 var mcpDisable = Environment.GetEnvironmentVariable("MCP_DISABLE_TELEMETRY");
                 if (!string.IsNullOrEmpty(mcpDisable) &&
                     (mcpDisable.Equals("true", StringComparison.OrdinalIgnoreCase) || mcpDisable == "1"))
+                {
+                    return false;
+                }
+
+                if (!McpSettingsProvider.Settings.telemetryEnabled)
                 {
                     return false;
                 }
