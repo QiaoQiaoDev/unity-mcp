@@ -66,7 +66,7 @@ def test_guardrails_rate_limit_blocks_after_threshold():
     with guard_env(
         MCP_GUARD_ENABLE="1",
         MCP_GUARD_ALLOWLIST="manage_asset:delete",
-        MCP_GUARD_RATE_LIMITS="manage_asset:2",
+        MCP_GUARD_RATE_LIMITS="manage_asset=2",
         MCP_GUARD_RATE_WINDOW="3600",
     ):
         assert evaluate("manage_asset", make_payload("delete")) is None

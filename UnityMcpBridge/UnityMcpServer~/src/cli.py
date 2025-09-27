@@ -71,7 +71,10 @@ def list_tools(show_details: bool = typer.Option(False, "--details", help="Show 
 
 
 @app.command("run-sample")
-def run_sample(path: Path) -> None:
+def run_sample(
+    path: Path,
+    execute: bool = typer.Option(True, "--execute/--preview", help="Execute the tool call (default) or print the normalized payload."),
+) -> None:
     """Execute a sample tool invocation described by a JSON file."""
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
@@ -85,6 +88,10 @@ def run_sample(path: Path) -> None:
         typer.secho("Sample file must contain 'tool' (str) and 'params' (object)", fg=typer.colors.RED)
         raise typer.Exit(code=1)
 
+    if not execute:
+        typer.echo(json.dumps({"tool": tool, "params": params}, indent=2))
+        return
+
     async def _run() -> Any:
         mcp = _build_mcp_server()
         return await mcp.call_tool(tool, params)
@@ -92,7 +99,12 @@ def run_sample(path: Path) -> None:
     try:
         result = asyncio.run(_run())
     except Exception as exc:  # pragma: no cover - depends on Unity state
-        typer.secho(f"Tool execution failed: {exc}", fg=typer.colors.RED)
+        message = str(exc)
+        if "Context is not available outside of a request" in message:
+            message = "Tool execution failed: no active request context. Launch the stdio server or re-run with --preview."
+        else:
+            message = f"Tool execution failed: {exc}"
+        typer.secho(message, fg=typer.colors.RED)
         raise typer.Exit(code=1) from exc
 
     typer.echo(json.dumps(_serialize(result), indent=2))

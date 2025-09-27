@@ -48,8 +48,8 @@ def test_run_sample_returns_output(tmp_path: Path, monkeypatch):
     sample_path = tmp_path / "sample.json"
     sample_path.write_text(json.dumps(sample), encoding="utf-8")
 
-    result = runner.invoke(app, ["run-sample", str(sample_path)])
+    result = runner.invoke(app, ["run-sample", str(sample_path), "--preview"])
     assert result.exit_code == 0
     payload = json.loads(result.stdout)
-    assert isinstance(payload, dict)
-    assert "data" in payload or isinstance(payload, list)
+    assert payload["tool"] == "list_resources"
+    assert "params" in payload
