@@ -94,6 +94,33 @@ MCP for Unity connects your tools using two components:
     3. The existing `Window > MCP for Unity > Disable Telemetry` Editor toggle.
 - When telemetry is disabled, Unity-side events are suppressed and Python honours the same environment flag during startup.
 
+## Guardrails (Opt-in)
+
+- Safeguards are disabled by default. Enable them by exporting `MCP_GUARD_ENABLE=1` before launching the server or Unity editor.
+- High-risk actions (asset deletion, destructive scene/menu operations, etc.) are blocked unless explicitly allowlisted with `MCP_GUARD_ALLOWLIST=manage_asset:delete,manage_scene:save`.
+- Flip `MCP_GUARD_DRY_RUN=1` to log actions without sending them to Unity. Guardrail responses include `state="dry_run"` so tooling can detect simulation mode.
+- Rate limit bursty requests with `MCP_GUARD_RATE_LIMITS` (for example, `manage_script=20,manage_script:apply_text_edits=5`) and adjust the evaluation window via `MCP_GUARD_RATE_WINDOW` (seconds).
+- For interactive approval flows, set `MCP_GUARD_REQUIRE_CONFIRMATION=1` and register a Python callback with `guardrails.register_confirmation_callback` to prompt or inspect requests before they execute.
+
+## CLI
+
+- Install in editable mode (`pip install -e .`) and use `unity-mcp` for quick diagnostics:
+  - `unity-mcp health` — pings the Unity bridge (respects guardrails).
+  - `unity-mcp list-tools [--details]` — prints available MCP tools as JSON.
+  - `unity-mcp run-sample path/to/sample.json` — runs a JSON-described tool call (handy for regression samples or repro scripts).
+- The existing `unity-mcp-server` entry point still launches the stdio transport (now configurable via the `MCP_TRANSPORT` env var).
+
+## Utility Scripts
+
+- Cross-platform helpers `./deploy-dev.sh` and `./restore-dev.sh` mirror the Windows `.bat` workflows for copying bridge/server files into a project cache with timestamped backups.
+- They perform the same validation/backup logic as their `.bat` counterparts and are safe to run on macOS/Linux terminals.
+
+## Tests & CI
+
+- Run the Python suite with `pytest -q`. New tests cover guardrail policies, the Typer CLI, and existing script-edit guards.
+- Unity Edit Mode tests live under `TestProjects/UnityMCPTests/Assets/Tests/EditMode/` and exercise editor helpers such as `McpSettingsProvider`.
+- GitHub Actions now runs `ci.yml` (Python lint/tests with non-blocking analyzers) alongside the existing `unity-tests.yml` (EditMode sweeps via game-ci).
+
 ---
 
 ## Installation ⚙️

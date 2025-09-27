@@ -45,8 +45,8 @@ export UNITY_MCP_DISABLE_TELEMETRY=true
 export MCP_DISABLE_TELEMETRY=true
 ```
 
-### Method 2: Unity Editor (Coming Soon)
-In Unity Editor: `Window > MCP for Unity > Settings > Disable Telemetry`
+### Method 2: Unity Editor UI
+Open `Window > MCP for Unity > Settings` and disable the **Telemetry** toggle. The same switch is exposed on the generated `Assets/Settings/McpSettings.asset` for source-controlled projects.
 
 ### Method 3: Manual Config
 Add to your MCP client config:

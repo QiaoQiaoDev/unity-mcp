@@ -58,7 +58,7 @@ namespace MCPForUnity.Editor
         private static int currentUnityPort = McpSettingsProvider.Settings.defaultUnityPort;
         private static bool isAutoConnectMode = false;
         private const ulong MaxFrameBytes = 64UL * 1024 * 1024; // 64 MiB hard cap for framed payloads
-        private static int FrameIOTimeoutMs => Mathf.RoundToInt(Settings.McpSettingsProvider.Settings.responseTimeoutSeconds * 1000f);
+        private static int FrameIOTimeoutMs => Mathf.RoundToInt(McpSettingsProvider.Settings.responseTimeoutSeconds * 1000f);
         
         // IO diagnostics
         private static long _ioSeq = 0;

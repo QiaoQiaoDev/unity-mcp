@@ -9,7 +9,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict
 
-from jsonschema import Draft202012Validator, ValidationError
+from jsonschema import Draft202012Validator, ValidationError, RefResolver
 
 from request_context import current_request_id
 
@@ -24,6 +24,28 @@ def _env_flag(name: str, default: bool) -> bool:
 
 
 SCHEMA_ROOT = Path(__file__).resolve().parents[3] / "protocol" / "schemas" / "v1"
+_SCHEMA_STORE: Dict[str, Dict[str, Any]] = {}
+
+
+def _load_schema(path: Path) -> Dict[str, Any]:
+    with path.open("r", encoding="utf-8") as fh:
+        schema = json.load(fh)
+    schema_id = schema.get("$id", path.as_uri())
+    _SCHEMA_STORE.setdefault(schema_id, schema)
+    return schema
+
+
+def _preload_base_schemas() -> None:
+    for local in (
+        SCHEMA_ROOT / "tools" / "tool-response.json",
+        SCHEMA_ROOT / "envelopes" / "request.json",
+        SCHEMA_ROOT / "envelopes" / "response.json",
+    ):
+        if local.exists():
+            _load_schema(local)
+
+
+_preload_base_schemas()
 
 
 def _schema_path(kind: str, tool: str | None = None) -> Path:
@@ -38,9 +60,9 @@ def _schema_path(kind: str, tool: str | None = None) -> Path:
 def _load_validator(kind: str, tool: str | None = None) -> Draft202012Validator | None:
     try:
         schema_file = _schema_path(kind, tool)
-        with schema_file.open("r", encoding="utf-8") as fh:
-            schema = json.load(fh)
-        return Draft202012Validator(schema)
+        schema = _load_schema(schema_file)
+        resolver = RefResolver.from_schema(schema, store=_SCHEMA_STORE)
+        return Draft202012Validator(schema, resolver=resolver)
     except FileNotFoundError:
         _logger.debug("Schema file missing for kind=%s tool=%s", kind, tool)
     except Exception:

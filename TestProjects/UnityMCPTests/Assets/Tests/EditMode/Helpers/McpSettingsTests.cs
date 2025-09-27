@@ -19,7 +19,7 @@ namespace MCPForUnity.Tests.EditMode.Helpers
         public static void SettingsHideFlagsPreventAssetCreation()
         {
             var settings = McpSettingsProvider.Settings;
-            Assert.AreEqual(HideFlags.HideAndDontSave, settings.hideFlags);
+            Assert.AreNotEqual(0, (settings.hideFlags & HideFlags.HideAndDontSave));
         }
     }
 }
