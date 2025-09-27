@@ -149,21 +149,40 @@ public class TestClass : MonoBehaviour
     total_lines = len(lines)
     assert idx >= total_lines - 5, f"method inserted too early (idx={idx}, total_lines={total_lines})"
 
+def _run_test(label, func):
+    """Execute a test function and return True on success for script usage."""
+
+    try:
+        func()
+    except AssertionError as exc:
+        print(f"❌ {label} failed: {exc}")
+        return False
+    except Exception as exc:  # pragma: no cover - defensive logging
+        print(f"❌ {label} errored: {exc}")
+        return False
+    else:
+        print(f"✅ {label} passed")
+        return True
+
+
 if __name__ == "__main__":
     print("Testing improved anchor matching...")
-    print("="*60)
-    
-    success1 = test_improved_anchor_matching()
-    
-    print("\n" + "="*60)
+    print("=" * 60)
+
+    success1 = _run_test("Improved anchor matching", test_improved_anchor_matching)
+
+    print("\n" + "=" * 60)
     print("Comparing old vs new behavior...")
-    success2 = test_old_vs_new_matching()
-    
-    print("\n" + "="*60)
+    success2 = _run_test("Old vs new matching", test_old_vs_new_matching)
+
+    print("\n" + "=" * 60)
     print("Testing _apply_edits_locally with improved matching...")
-    success3 = test_apply_edits_with_improved_matching()
-    
-    print("\n" + "="*60)
+    success3 = _run_test(
+        "_apply_edits_locally with improved matching",
+        test_apply_edits_with_improved_matching,
+    )
+
+    print("\n" + "=" * 60)
     if success1 and success2 and success3:
         print("🎉 ALL TESTS PASSED! Improved anchor matching is working!")
     else:
