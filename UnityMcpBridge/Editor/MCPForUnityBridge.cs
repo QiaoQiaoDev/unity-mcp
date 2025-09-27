@@ -892,8 +892,11 @@ namespace MCPForUnity.Editor
                     }
                     else
                     {
-                        string responseJson = ExecuteCommand(command);
-                        tcs.SetResult(responseJson);
+                        using (RequestContext.Push(command.requestId))
+                        {
+                            string responseJson = ExecuteCommand(command);
+                            tcs.SetResult(responseJson);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -1021,6 +1024,7 @@ namespace MCPForUnity.Editor
                     var errorResponse = new
                     {
                         status = "error",
+                        requestId = RequestContext.CurrentRequestId,
                         error = "Command type cannot be empty",
                         details = "A valid command type is required for processing",
                     };
@@ -1033,6 +1037,7 @@ namespace MCPForUnity.Editor
                     var pingResponse = new
                     {
                         status = "success",
+                        requestId = command.requestId ?? RequestContext.CurrentRequestId,
                         result = new { message = "pong" },
                     };
                     return JsonConvert.SerializeObject(pingResponse);
@@ -1063,20 +1068,28 @@ namespace MCPForUnity.Editor
                 };
 
                 // Standard success response format
-                var response = new { status = "success", result };
+                string requestId = command.requestId ?? RequestContext.CurrentRequestId;
+                var response = new
+                {
+                    status = "success",
+                    requestId,
+                    result,
+                };
                 return JsonConvert.SerializeObject(response);
             }
             catch (Exception ex)
             {
                 // Log the detailed error in Unity for debugging
-                Debug.LogError(
+                McpLog.Error(
                     $"Error executing command '{command?.type ?? "Unknown"}': {ex.Message}\n{ex.StackTrace}"
                 );
 
                 // Standard error response format
+                string requestId = command?.requestId ?? RequestContext.CurrentRequestId;
                 var response = new
                 {
                     status = "error",
+                    requestId,
                     error = ex.Message, // Provide the specific error message
                     command = command?.type ?? "Unknown", // Include the command type if available
                     stackTrace = ex.StackTrace, // Include stack trace for detailed debugging
