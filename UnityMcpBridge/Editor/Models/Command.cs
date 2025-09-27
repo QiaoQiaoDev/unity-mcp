@@ -16,6 +16,10 @@ namespace MCPForUnity.Editor.Models
         /// The parameters for the command
         /// </summary>
         public JObject @params { get; set; }
+
+        /// <summary>
+        /// Optional request identifier propagated from the Python bridge.
+        /// </summary>
+        public string requestId { get; set; }
     }
 }
-
