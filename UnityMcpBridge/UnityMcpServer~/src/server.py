@@ -152,6 +152,12 @@ def asset_creation_strategy() -> str:
     )
 
 
+def main() -> None:
+    """Entry point used by the console script."""
+    transport = os.getenv("MCP_TRANSPORT", "stdio")
+    mcp.run(transport=transport)
+
+
 # Run the server
 if __name__ == "__main__":
-    mcp.run(transport='stdio')
+    main()

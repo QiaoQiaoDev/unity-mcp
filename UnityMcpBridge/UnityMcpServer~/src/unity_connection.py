@@ -9,7 +9,7 @@ import threading
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Callable
 from config import config
 from port_discovery import PortDiscovery
 from request_context import current_request_id
@@ -201,7 +201,7 @@ class UnityConnection:
             logger.error(f"Error during receive: {str(e)}")
             raise
 
-    def send_command(self, command_type: str, params: Dict[str, Any] = None) -> Dict[str, Any]:
+    def send_command(self, command_type: str, params: Dict[str, Any] = None, *, timeout: float | None = None) -> Dict[str, Any]:
         """Send a command with retry/backoff and port rediscovery. Pings only when requested."""
         # Defensive guard: catch empty/placeholder invocations early
         if not command_type:
@@ -283,7 +283,10 @@ class UnityConnection:
 
                     # During retry bursts use a short receive timeout and ensure restoration
                     restore_timeout = None
-                    if attempt > 0 and last_short_timeout is None:
+                    if timeout is not None:
+                        restore_timeout = self.sock.gettimeout()
+                        self.sock.settimeout(timeout)
+                    elif attempt > 0 and last_short_timeout is None:
                         restore_timeout = self.sock.gettimeout()
                         self.sock.settimeout(1.0)
                     try:
@@ -293,6 +296,8 @@ class UnityConnection:
                     finally:
                         if restore_timeout is not None:
                             self.sock.settimeout(restore_timeout)
+                            last_short_timeout = None
+                        elif timeout is not None:
                             last_short_timeout = None
 
                 # Parse
@@ -395,7 +400,15 @@ def _is_reloading_response(resp: dict) -> bool:
     return "reload" in message_text
 
 
-def send_command_with_retry(command_type: str, params: Dict[str, Any], *, max_retries: int | None = None, retry_ms: int | None = None) -> Dict[str, Any]:
+def send_command_with_retry(
+    command_type: str,
+    params: Dict[str, Any],
+    *,
+    max_retries: int | None = None,
+    retry_ms: int | None = None,
+    timeout: float | None = None,
+    cancel: Callable[[], bool] | None = None,
+) -> Dict[str, Any]:
     """Send a command via the shared connection, waiting politely through Unity reloads.
 
     Uses config.reload_retry_ms and config.reload_max_retries by default. Preserves the
@@ -407,17 +420,39 @@ def send_command_with_retry(command_type: str, params: Dict[str, Any], *, max_re
     if retry_ms is None:
         retry_ms = getattr(config, "reload_retry_ms", 250)
 
-    response = conn.send_command(command_type, params)
+    if cancel and cancel():
+        return {
+            "success": False,
+            "state": "cancelled",
+            "error": "Operation cancelled by caller",
+        }
+
+    response = conn.send_command(command_type, params, timeout=timeout)
     retries = 0
     while _is_reloading_response(response) and retries < max_retries:
         delay_ms = int(response.get("retry_after_ms", retry_ms)) if isinstance(response, dict) else retry_ms
         time.sleep(max(0.0, delay_ms / 1000.0))
+        if cancel and cancel():
+            return {
+                "success": False,
+                "state": "cancelled",
+                "error": "Operation cancelled by caller",
+            }
         retries += 1
-        response = conn.send_command(command_type, params)
+        response = conn.send_command(command_type, params, timeout=timeout)
     return response
 
 
-async def async_send_command_with_retry(command_type: str, params: Dict[str, Any], *, loop=None, max_retries: int | None = None, retry_ms: int | None = None) -> Dict[str, Any]:
+async def async_send_command_with_retry(
+    command_type: str,
+    params: Dict[str, Any],
+    *,
+    loop=None,
+    max_retries: int | None = None,
+    retry_ms: int | None = None,
+    timeout: float | None = None,
+    cancel: Callable[[], bool] | None = None,
+) -> Dict[str, Any]:
     """Async wrapper that runs the blocking retry helper in a thread pool."""
     try:
         import asyncio  # local import to avoid mandatory asyncio dependency for sync callers
@@ -425,7 +460,14 @@ async def async_send_command_with_retry(command_type: str, params: Dict[str, Any
             loop = asyncio.get_running_loop()
         return await loop.run_in_executor(
             None,
-            lambda: send_command_with_retry(command_type, params, max_retries=max_retries, retry_ms=retry_ms),
+            lambda: send_command_with_retry(
+                command_type,
+                params,
+                max_retries=max_retries,
+                retry_ms=retry_ms,
+                timeout=timeout,
+                cancel=cancel,
+            ),
         )
     except Exception as e:
         # Return a structured error dict for consistency with other responses
