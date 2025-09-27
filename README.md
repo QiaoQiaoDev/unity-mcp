@@ -64,6 +64,38 @@ MCP for Unity connects your tools using two components:
 
 ---
 
+## Observability & Logging
+
+- Every tool invocation now carries a `request_id` that is propagated end-to-end: Python logs, Unity logs, and tool responses all include the same identifier.
+- Python logging defaults to newline-delimited JSON. Set `LOG_PLAIN_TEXT=true` or `MCP_JSON_LOGS=false` when you prefer human-friendly formatting.
+- Unity logs adopt the same structure behind the `MCP_JSON_LOGS` environment toggle (default = JSON for the server, plain text in Editor). JSON entries are prefixed with `[MCP]` so you can filter quickly in the Console.
+- Rotating server logs live at `~/Library/Application Support/UnityMCP/Logs/unity_mcp_server.log`. Unity heartbeats continue to be written under `~/.unity-mcp/`.
+
+## Schema Validation
+
+- All tool requests/responses are validated against JSON Schemas stored under `protocol/schemas/v1/`.
+- Validation failures emit structured warnings tagged with the active `request_id`. Requests are **never** blocked—warnings are purely informational so you can iterate safely.
+- Envelopes (JSON-RPC request/response shells) can be validated by calling `schema_validator.validate_envelope`, and you can disable validation entirely with `MCP_VALIDATE_SCHEMAS=false` if you are experimenting.
+
+## Packaging & Tooling
+
+- The repository now ships a root `pyproject.toml`. Install the server in editable mode with `pip install -e .` or launch it via `uv run unity-mcp-server`.
+- Formatting and linting defaults are bundled (Black, Ruff, Mypy). Run `ruff check`, `black`, or `mypy` without supplying extra flags.
+- A console script `unity-mcp-server` is provided—override the transport via `MCP_TRANSPORT=stdio|sse|streamable-http`.
+
+## Unity Settings & Telemetry
+
+- A `McpSettings` ScriptableObject (created automatically on demand) lives at `Assets/Settings/McpSettings.asset`.
+    - Configure default Unity port, bridge response timeout, and permission toggles without code changes.
+    - The settings asset is optional; defaults mirror the previous behaviour if it is missing.
+- Telemetry can be disabled in multiple ways:
+    1. Environment variables (`UNITY_MCP_TELEMETRY_ENABLED=false`, `UNITY_MCP_DISABLE_TELEMETRY=1`, or the existing `DISABLE_TELEMETRY`/`MCP_DISABLE_TELEMETRY`).
+    2. The new `McpSettings` asset (`telemetryEnabled` checkbox).
+    3. The existing `Window > MCP for Unity > Disable Telemetry` Editor toggle.
+- When telemetry is disabled, Unity-side events are suppressed and Python honours the same environment flag during startup.
+
+---
+
 ## Installation ⚙️
 
 ### Prerequisites
