@@ -8,6 +8,15 @@ import inspect
 import logging
 from typing import Callable, Any
 from telemetry import record_tool_usage, record_milestone, MilestoneType
+from request_context import activate_request_context, annotate_response
+
+
+def _extract_ctx(args: tuple, kwargs: dict):
+    """Best-effort extraction of the MCP Context from positional/keyword args."""
+    for value in args:
+        if hasattr(value, "request_id"):
+            return value
+    return kwargs.get("ctx")
 
 _log = logging.getLogger("unity-mcp-telemetry")
 _decorator_log_count = 0
@@ -29,23 +38,25 @@ def telemetry_tool(tool_name: str):
                 sub_action = bound.arguments.get("action")
             except Exception:
                 sub_action = None
+            ctx = _extract_ctx(args, kwargs)
             try:
-                global _decorator_log_count
-                if _decorator_log_count < 10:
-                    _log.info(f"telemetry_decorator sync: tool={tool_name}")
-                    _decorator_log_count += 1
-                result = func(*args, **kwargs)
-                success = True
-                action_val = sub_action or kwargs.get("action")
-                try:
-                    if tool_name == "manage_script" and action_val == "create":
-                        record_milestone(MilestoneType.FIRST_SCRIPT_CREATION)
-                    elif tool_name.startswith("manage_scene"):
-                        record_milestone(MilestoneType.FIRST_SCENE_MODIFICATION)
-                    record_milestone(MilestoneType.FIRST_TOOL_USAGE)
-                except Exception:
-                    _log.debug("milestone emit failed", exc_info=True)
-                return result
+                with activate_request_context(ctx):
+                    global _decorator_log_count
+                    if _decorator_log_count < 10:
+                        _log.info(f"telemetry_decorator sync: tool={tool_name}")
+                        _decorator_log_count += 1
+                    result = func(*args, **kwargs)
+                    success = True
+                    action_val = sub_action or kwargs.get("action")
+                    try:
+                        if tool_name == "manage_script" and action_val == "create":
+                            record_milestone(MilestoneType.FIRST_SCRIPT_CREATION)
+                        elif tool_name.startswith("manage_scene"):
+                            record_milestone(MilestoneType.FIRST_SCENE_MODIFICATION)
+                        record_milestone(MilestoneType.FIRST_TOOL_USAGE)
+                    except Exception:
+                        _log.debug("milestone emit failed", exc_info=True)
+                    return annotate_response(result)
             except Exception as e:
                 error = str(e)
                 raise
@@ -70,23 +81,25 @@ def telemetry_tool(tool_name: str):
                 sub_action = bound.arguments.get("action")
             except Exception:
                 sub_action = None
+            ctx = _extract_ctx(args, kwargs)
             try:
-                global _decorator_log_count
-                if _decorator_log_count < 10:
-                    _log.info(f"telemetry_decorator async: tool={tool_name}")
-                    _decorator_log_count += 1
-                result = await func(*args, **kwargs)
-                success = True
-                action_val = sub_action or kwargs.get("action")
-                try:
-                    if tool_name == "manage_script" and action_val == "create":
-                        record_milestone(MilestoneType.FIRST_SCRIPT_CREATION)
-                    elif tool_name.startswith("manage_scene"):
-                        record_milestone(MilestoneType.FIRST_SCENE_MODIFICATION)
-                    record_milestone(MilestoneType.FIRST_TOOL_USAGE)
-                except Exception:
-                    _log.debug("milestone emit failed", exc_info=True)
-                return result
+                with activate_request_context(ctx):
+                    global _decorator_log_count
+                    if _decorator_log_count < 10:
+                        _log.info(f"telemetry_decorator async: tool={tool_name}")
+                        _decorator_log_count += 1
+                    result = await func(*args, **kwargs)
+                    success = True
+                    action_val = sub_action or kwargs.get("action")
+                    try:
+                        if tool_name == "manage_script" and action_val == "create":
+                            record_milestone(MilestoneType.FIRST_SCRIPT_CREATION)
+                        elif tool_name.startswith("manage_scene"):
+                            record_milestone(MilestoneType.FIRST_SCENE_MODIFICATION)
+                        record_milestone(MilestoneType.FIRST_TOOL_USAGE)
+                    except Exception:
+                        _log.debug("milestone emit failed", exc_info=True)
+                    return annotate_response(result)
             except Exception as e:
                 error = str(e)
                 raise
